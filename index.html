@@ -395,6 +395,174 @@
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
+  /* ── ANNUAL VIEW ── */
+  .annual-header-strip {
+    background: linear-gradient(120deg, #1A1A2E 0%, #3D3A7A 100%);
+    border-radius: var(--radius); padding: 20px 22px;
+    color: #fff; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .annual-label {
+    font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700;
+  }
+  .annual-subtitle { font-size: .78rem; opacity: .7; margin-top: 3px; }
+
+  .annual-year-toggle { display: flex; gap: 6px; }
+  .year-btn {
+    padding: 7px 18px; border-radius: 50px; border: 2px solid rgba(255,255,255,.3);
+    background: transparent; color: rgba(255,255,255,.6);
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .9rem; cursor: pointer;
+    transition: all .2s;
+  }
+  .year-btn.active { background: var(--charlotte); color: #fff; border-color: var(--charlotte); }
+
+  .annual-tip {
+    background: var(--charlotte-soft); color: #d4831a;
+    border-radius: var(--radius-sm); padding: 10px 16px;
+    font-size: .82rem; font-weight: 600; margin-bottom: 18px;
+  }
+
+  .annual-month-block { margin-bottom: 10px; }
+  .annual-month-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow); padding: 12px 16px;
+    cursor: pointer; user-select: none;
+    transition: background .15s;
+  }
+  .annual-month-header:hover { background: var(--border); }
+  .annual-month-header.open { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+  .annual-month-header .mh-left {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .annual-month-num {
+    background: var(--julien-soft); color: var(--julien);
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: .85rem;
+  }
+  .annual-month-name {
+    font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+  }
+  .annual-month-count {
+    font-size: .75rem; color: var(--muted); font-weight: 700;
+  }
+  .annual-month-arrow { font-size: .8rem; color: var(--muted); transition: transform .2s; }
+  .annual-month-header.open .annual-month-arrow { transform: rotate(180deg); }
+
+  .annual-month-events {
+    display: none; flex-direction: column; gap: 8px;
+    background: var(--bg); border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    padding: 10px; border: 1px solid var(--border); border-top: none;
+  }
+  .annual-month-events.open { display: flex; }
+  .annual-month-add {
+    border: 2px dashed var(--border); border-radius: var(--radius-sm);
+    padding: 10px; text-align: center;
+    color: var(--muted); font-size: .8rem; font-weight: 700;
+    cursor: pointer; transition: border-color .15s, color .15s;
+  }
+  .annual-month-add:hover { border-color: var(--julien); color: var(--julien); }
+
+  .annual-event-row {
+    background: var(--card); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow); padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    border-left: 4px solid var(--border);
+    transition: transform .15s;
+    cursor: default;
+  }
+  .annual-event-row:hover { transform: translateX(3px); }
+  .annual-ev-day {
+    min-width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: .9rem;
+    background: var(--bg);
+  }
+  .annual-ev-info { flex: 1; }
+  .annual-ev-title { font-weight: 800; font-size: .9rem; }
+  .annual-ev-meta  { font-size: .73rem; color: var(--muted); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .annual-ev-actions { display: flex; gap: 6px; }
+
+  .btn-plan {
+    border: none; background: var(--julien-soft); color: var(--julien);
+    padding: 5px 12px; border-radius: 20px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .72rem;
+    cursor: pointer; white-space: nowrap; transition: background .15s;
+  }
+  .btn-plan:hover { background: var(--julien); color: #fff; }
+
+  /* ── IDEAS VIEW ── */
+  .ideas-header-strip {
+    background: linear-gradient(120deg, #2D7A4A 0%, #4ECDC4 100%);
+    border-radius: var(--radius); padding: 20px 22px;
+    color: #fff; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .btn-add-idea {
+    border: 2px solid rgba(255,255,255,.6); background: rgba(255,255,255,.15);
+    color: #fff; padding: 9px 18px; border-radius: 50px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .88rem;
+    cursor: pointer; transition: background .2s;
+  }
+  .btn-add-idea:hover { background: rgba(255,255,255,.3); }
+
+  .ideas-filter-bar {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .idea-filter-btn {
+    padding: 6px 14px; border-radius: 50px;
+    border: 2px solid var(--border); background: var(--card);
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .78rem;
+    cursor: pointer; transition: all .15s; color: var(--muted);
+  }
+  .idea-filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .idea-filter-btn:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+
+  .ideas-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;
+  }
+  .idea-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 16px;
+    display: flex; flex-direction: column; gap: 8px;
+    border-top: 4px solid var(--border);
+    transition: transform .15s, box-shadow .15s;
+    position: relative;
+  }
+  .idea-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(108,99,255,.14); }
+  .idea-card.done { opacity: .55; }
+  .idea-card.done .idea-title { text-decoration: line-through; }
+
+  .idea-card-top {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  }
+  .idea-title { font-weight: 800; font-size: .95rem; flex: 1; }
+  .idea-actions { display: flex; gap: 4px; }
+
+  .idea-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .idea-note { font-size: .78rem; color: var(--muted); font-style: italic; }
+  .season-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: .7rem; font-weight: 700;
+    background: var(--border); color: var(--muted);
+  }
+  .btn-check {
+    border: none; width: 28px; height: 28px; border-radius: 50%;
+    font-size: .85rem; cursor: pointer; transition: background .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-check-todo { background: var(--timeo-soft); color: #2aa39a; }
+  .btn-check-done { background: #E8F8E8; color: #3A9A3A; }
+  .btn-schedule {
+    border: none; background: var(--julien-soft); color: var(--julien);
+    padding: 6px 12px; border-radius: 20px; width: 100%;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .76rem;
+    cursor: pointer; transition: background .15s; margin-top: 4px;
+  }
+  .btn-schedule:hover { background: var(--julien); color: #fff; }
 </style>
 </head>
 <body>
@@ -422,6 +590,8 @@
     <button class="tab-btn active" onclick="showTab('upcoming')">📋 À venir</button>
     <button class="tab-btn" onclick="showTab('calendar')">📅 Calendrier</button>
     <button class="tab-btn" onclick="showTab('week')">🗓 Semaine</button>
+    <button class="tab-btn" onclick="showTab('annual')">🔁 Annuel</button>
+    <button class="tab-btn" onclick="showTab('ideas')">💡 Activités</button>
   </div>
 </header>
 
@@ -478,10 +648,177 @@
     <div class="week-days" id="week-days"></div>
   </div>
 
+  <!-- ═══════════════ VUE ANNUELLE ═══════════════ -->
+  <div id="view-annual" class="view">
+    <div class="annual-header-strip">
+      <div>
+        <div class="annual-label">Récurrence annuelle</div>
+        <div class="annual-subtitle">Ne jamais oublier un événement d'une année à l'autre</div>
+      </div>
+      <div class="annual-year-toggle">
+        <button class="year-btn active" id="yr-btn-cur" onclick="switchAnnualYear('cur', this)">2025</button>
+        <button class="year-btn" id="yr-btn-next" onclick="switchAnnualYear('next', this)">2026</button>
+      </div>
+    </div>
+
+    <div class="annual-tip">
+      💡 Ces événements se répètent chaque année. Copiez-les dans l'agenda en cliquant <strong>Planifier</strong>.
+    </div>
+
+    <!-- Month accordion -->
+    <div id="annual-months"></div>
+  </div>
+
+  <!-- ═══════════════ VUE ACTIVITÉS ═══════════════ -->
+  <div id="view-ideas" class="view">
+    <div class="ideas-header-strip">
+      <div>
+        <div class="annual-label">Idées & Activités à faire</div>
+        <div class="annual-subtitle">Notez vos idées, programmez-les quand vous êtes prêts</div>
+      </div>
+      <button class="btn-add-idea" onclick="openIdeaModal()">＋ Nouvelle idée</button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="ideas-filter-bar" id="ideas-filter-bar">
+      <button class="idea-filter-btn active" data-filter="all" onclick="setIdeaFilter('all',this)">Toutes</button>
+      <button class="idea-filter-btn" data-filter="todo" onclick="setIdeaFilter('todo',this)">À faire</button>
+      <button class="idea-filter-btn" data-filter="done" onclick="setIdeaFilter('done',this)">Réalisées ✅</button>
+      <button class="idea-filter-btn" data-filter="sport" onclick="setIdeaFilter('sport',this)">⚽ Sport</button>
+      <button class="idea-filter-btn" data-filter="sortie" onclick="setIdeaFilter('sortie',this)">🎉 Sorties</button>
+      <button class="idea-filter-btn" data-filter="voyage" onclick="setIdeaFilter('voyage',this)">✈️ Voyages</button>
+      <button class="idea-filter-btn" data-filter="cuisine" onclick="setIdeaFilter('cuisine',this)">🍕 Cuisine</button>
+      <button class="idea-filter-btn" data-filter="culture" onclick="setIdeaFilter('culture',this)">🎭 Culture</button>
+      <button class="idea-filter-btn" data-filter="autre" onclick="setIdeaFilter('autre',this)">📌 Autre</button>
+    </div>
+
+    <div id="ideas-list"></div>
+  </div>
+
 </main>
 
+<!-- MODAL IDEA -->
+<div class="modal-overlay" id="idea-modal-overlay" onclick="closeIdeaModalOutside(event)">
+  <div class="modal">
+    <h2 id="idea-modal-title">💡 Nouvelle activité</h2>
+    <div class="form-row">
+      <label>Titre *</label>
+      <input type="text" id="if-title" placeholder="Ex : Randonnée en montagne…">
+    </div>
+    <div class="form-row">
+      <label>Catégorie</label>
+      <select id="if-cat">
+        <option value="sport">⚽ Sport</option>
+        <option value="sortie">🎉 Sortie</option>
+        <option value="voyage">✈️ Voyage</option>
+        <option value="cuisine">🍕 Cuisine</option>
+        <option value="culture">🎭 Culture</option>
+        <option value="autre">📌 Autre</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Membres concernés</label>
+      <div class="members-check">
+        <label class="member-check-label mc-lou" id="imc-Lou">
+          <input type="checkbox" value="Lou" onchange="toggleIdeaCheck('Lou')"> Lou
+        </label>
+        <label class="member-check-label mc-timeo" id="imc-Timéo">
+          <input type="checkbox" value="Timéo" onchange="toggleIdeaCheck('Timéo')"> Timéo
+        </label>
+        <label class="member-check-label mc-charlotte" id="imc-Charlotte">
+          <input type="checkbox" value="Charlotte" onchange="toggleIdeaCheck('Charlotte')"> Charlotte
+        </label>
+        <label class="member-check-label mc-julien" id="imc-Julien">
+          <input type="checkbox" value="Julien" onchange="toggleIdeaCheck('Julien')"> Julien
+        </label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Saison / période idéale</label>
+      <select id="if-season">
+        <option value="">Pas de préférence</option>
+        <option value="printemps">🌸 Printemps</option>
+        <option value="ete">☀️ Été</option>
+        <option value="automne">🍂 Automne</option>
+        <option value="hiver">❄️ Hiver</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Note / description</label>
+      <textarea id="if-note" rows="2" placeholder="Détails, lieu, budget…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeIdeaModal()">Annuler</button>
+      <button class="btn-primary" onclick="saveIdea()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ANNUAL EVENT -->
+<div class="modal-overlay" id="annual-modal-overlay" onclick="closeAnnualModalOutside(event)">
+  <div class="modal">
+    <h2 id="annual-modal-title">🔁 Nouvel événement annuel</h2>
+    <div class="form-row">
+      <label>Titre *</label>
+      <input type="text" id="af-title" placeholder="Ex : Anniversaire de Timéo…">
+    </div>
+    <div class="form-row">
+      <label>Mois *</label>
+      <select id="af-month">
+        <option value="0">Janvier</option><option value="1">Février</option>
+        <option value="2">Mars</option><option value="3">Avril</option>
+        <option value="4">Mai</option><option value="5">Juin</option>
+        <option value="6">Juillet</option><option value="7">Août</option>
+        <option value="8">Septembre</option><option value="9">Octobre</option>
+        <option value="10">Novembre</option><option value="11">Décembre</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Jour (optionnel)</label>
+      <input type="number" id="af-day" min="1" max="31" placeholder="ex: 14">
+    </div>
+    <div class="form-row">
+      <label>Catégorie</label>
+      <select id="af-cat">
+        <option value="famille">🏠 Famille</option>
+        <option value="sport">⚽ Sport</option>
+        <option value="sortie">🎉 Sortie</option>
+        <option value="scolaire">📚 Scolaire</option>
+        <option value="sante">🏥 Santé</option>
+        <option value="vacances">✈️ Vacances</option>
+        <option value="autre">📌 Autre</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Membres concernés</label>
+      <div class="members-check">
+        <label class="member-check-label mc-lou" id="amc-Lou">
+          <input type="checkbox" value="Lou" onchange="toggleAnnualCheck('Lou')"> Lou
+        </label>
+        <label class="member-check-label mc-timeo" id="amc-Timéo">
+          <input type="checkbox" value="Timéo" onchange="toggleAnnualCheck('Timéo')"> Timéo
+        </label>
+        <label class="member-check-label mc-charlotte" id="amc-Charlotte">
+          <input type="checkbox" value="Charlotte" onchange="toggleAnnualCheck('Charlotte')"> Charlotte
+        </label>
+        <label class="member-check-label mc-julien" id="amc-Julien">
+          <input type="checkbox" value="Julien" onchange="toggleAnnualCheck('Julien')"> Julien
+        </label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Note</label>
+      <textarea id="af-note" rows="2" placeholder="Lieu habituel, détails…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeAnnualModal()">Annuler</button>
+      <button class="btn-primary" onclick="saveAnnualEvent()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- FAB -->
-<button class="fab" onclick="openModal()" title="Ajouter un événement">＋</button>
+<button class="fab" id="main-fab" onclick="handleFab()" title="Ajouter">＋</button>
 
 <!-- MODAL ADD EVENT -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
@@ -571,6 +908,10 @@ function init() {
 
   loadEvents();
   seedDemo();
+  loadAnnualEvents();
+  seedAnnual();
+  loadIdeas();
+  seedIdeas();
 
   document.getElementById('today-display').textContent = formatDateFR(today);
 
@@ -865,13 +1206,24 @@ function changeWeek(dir) {
 // ─────────────────────────────────────────
 //  TABS
 // ─────────────────────────────────────────
+let activeTab = 'upcoming';
+
 function showTab(name) {
+  activeTab = name;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   event.target.classList.add('active');
   if (name==='calendar') renderCalendar();
   if (name==='week') renderWeek();
+  if (name==='annual') renderAnnual();
+  if (name==='ideas') renderIdeas();
+}
+
+function handleFab() {
+  if (activeTab === 'annual') openAnnualModal(new Date().getMonth());
+  else if (activeTab === 'ideas') openIdeaModal();
+  else openModal();
 }
 
 // ─────────────────────────────────────────
@@ -989,6 +1341,395 @@ function showNotif(msg) {
   el.textContent = msg;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2800);
+}
+
+// ─────────────────────────────────────────
+//  ANNUAL EVENTS
+// ─────────────────────────────────────────
+const ANNUAL_KEY = 'faugere_annual_v1';
+let annualEvents = [];
+let annualYear = 'cur'; // 'cur' or 'next'
+let editingAnnualId = null;
+const MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const MONTH_EMOJIS = ['❄️','💝','🌸','🌷','🌻','☀️','🏖','🍦','🍂','🎃','🍁','🎄'];
+
+function loadAnnualEvents() {
+  try { annualEvents = JSON.parse(localStorage.getItem(ANNUAL_KEY) || '[]'); }
+  catch { annualEvents = []; }
+}
+function saveAnnualEvents() { localStorage.setItem(ANNUAL_KEY, JSON.stringify(annualEvents)); }
+
+function seedAnnual() {
+  if (annualEvents.length > 0) return;
+  const demos = [
+    { title:"Anniversaire Lou 🎂",        month:3,  day:12, cat:'famille', members:MEMBERS,      note:'' },
+    { title:"Anniversaire Timéo 🎂",       month:7,  day:8,  cat:'famille', members:MEMBERS,      note:'Penser au gâteau !' },
+    { title:"Anniversaire Charlotte 🎂",   month:9,  day:24, cat:'famille', members:MEMBERS,      note:'' },
+    { title:"Anniversaire Julien 🎂",      month:1,  day:15, cat:'famille', members:MEMBERS,      note:'' },
+    { title:"Rentrée scolaire 📚",         month:8,  day:null, cat:'scolaire', members:['Lou','Timéo','Charlotte','Julien'], note:'Préparer les fournitures' },
+    { title:"Vacances de Noël ✈️",         month:11, day:null, cat:'vacances', members:MEMBERS,   note:'Organiser les déplacements' },
+    { title:"Vacances d\'été ☀️",          month:6,  day:null, cat:'vacances', members:MEMBERS,   note:'Réserver avant mars' },
+    { title:"Réunion parents d\'élèves",   month:9,  day:null, cat:'scolaire', members:['Charlotte','Julien'], note:'' },
+    { title:"Médecin annuel Lou",          month:4,  day:null, cat:'sante',   members:['Lou'],     note:'Bilan annuel' },
+    { title:"Médecin annuel Timéo",        month:4,  day:null, cat:'sante',   members:['Timéo'],   note:'Bilan annuel' },
+  ];
+  demos.forEach((ev,i) => annualEvents.push({ id: Date.now()+i+5000, ...ev }));
+  saveAnnualEvents();
+}
+
+function switchAnnualYear(yr, btn) {
+  annualYear = yr;
+  document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAnnual();
+}
+
+function renderAnnual() {
+  const curYear  = new Date().getFullYear();
+  const dispYear = annualYear === 'cur' ? curYear : curYear + 1;
+  document.getElementById('yr-btn-cur').textContent  = curYear;
+  document.getElementById('yr-btn-next').textContent = curYear + 1;
+
+  // group by month
+  const byMonth = {};
+  for (let m=0;m<12;m++) byMonth[m] = [];
+  annualEvents.forEach(ev => byMonth[ev.month].push(ev));
+
+  let html = '';
+  for (let m=0;m<12;m++) {
+    const evs = byMonth[m];
+    const isOpen = evs.length > 0;
+    html += `
+    <div class="annual-month-block">
+      <div class="annual-month-header${isOpen?' open':''}" onclick="toggleMonthBlock(this)">
+        <div class="mh-left">
+          <div class="annual-month-num">${MONTH_EMOJIS[m]}</div>
+          <div>
+            <div class="annual-month-name">${MONTH_NAMES[m]}</div>
+            <div class="annual-month-count">${evs.length} événement${evs.length>1?'s':''}</div>
+          </div>
+        </div>
+        <span class="annual-month-arrow">▼</span>
+      </div>
+      <div class="annual-month-events${isOpen?' open':''}">
+        ${evs.map(ev => annualEventRowHTML(ev, dispYear)).join('')}
+        <div class="annual-month-add" onclick="openAnnualModal(${m})">＋ Ajouter un événement en ${MONTH_NAMES[m]}</div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('annual-months').innerHTML = html;
+}
+
+function toggleMonthBlock(header) {
+  header.classList.toggle('open');
+  const evs = header.nextElementSibling;
+  evs.classList.toggle('open');
+}
+
+function annualEventRowHTML(ev, year) {
+  const m = ev.members.find(mm => activeFilters.has(mm));
+  const col  = m ? MEMBER_COLORS[m].main : '#aaa';
+  const soft = m ? MEMBER_COLORS[m].soft : '#f0f0f0';
+  const memberTags = ev.members.map(mm =>
+    `<span class="tag" style="background:${MEMBER_COLORS[mm]?.soft||'#eee'};color:${MEMBER_COLORS[mm]?.main||'#999'}">${mm}</span>`
+  ).join('');
+  const dayStr = ev.day ? `le ${ev.day}` : 'Jour à définir';
+  return `
+  <div class="annual-event-row" style="border-left-color:${col}">
+    <div class="annual-ev-day" style="background:${soft};color:${col}">${ev.day||'?'}</div>
+    <div class="annual-ev-info">
+      <div class="annual-ev-title">${CAT_EMOJIS[ev.cat]||'📌'} ${ev.title}</div>
+      <div class="annual-ev-meta">
+        <span>${dayStr} ${MONTH_NAMES[ev.month]} ${year}</span>
+        <span class="tag cat-${ev.cat}">${CAT_LABELS[ev.cat]||ev.cat}</span>
+        ${memberTags}
+      </div>
+    </div>
+    <div class="annual-ev-actions">
+      <button class="btn-plan" onclick="scheduleAnnual(${ev.id},${year})">📅 Planifier</button>
+      <button class="btn-icon" onclick="deleteAnnual(event,${ev.id})" title="Supprimer">🗑</button>
+    </div>
+  </div>`;
+}
+
+function scheduleAnnual(id, year) {
+  const ev = annualEvents.find(e=>e.id===id);
+  if (!ev) return;
+  const day = ev.day || 1;
+  const ds = `${year}-${String(ev.month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  // pre-fill the main event modal
+  editingId = null;
+  document.getElementById('modal-title').textContent = '📅 Planifier : ' + ev.title;
+  document.getElementById('f-title').value = ev.title;
+  document.getElementById('f-date').value  = ds;
+  document.getElementById('f-time').value  = '';
+  document.getElementById('f-cat').value   = ev.cat;
+  document.getElementById('f-note').value  = ev.note || '';
+  MEMBERS.forEach(m => {
+    const lbl = document.getElementById('mc-'+m);
+    const cb  = lbl ? lbl.querySelector('input') : null;
+    if (cb) {
+      cb.checked = ev.members.includes(m);
+      lbl.classList.toggle('checked', ev.members.includes(m));
+    }
+  });
+  document.getElementById('modal-overlay').classList.add('open');
+  showNotif('📅 Prêt à planifier – ajustez la date si besoin');
+}
+
+function openAnnualModal(month) {
+  editingAnnualId = null;
+  document.getElementById('annual-modal-title').textContent = '🔁 Nouvel événement annuel';
+  document.getElementById('af-title').value = '';
+  document.getElementById('af-month').value = month;
+  document.getElementById('af-day').value   = '';
+  document.getElementById('af-cat').value   = 'famille';
+  document.getElementById('af-note').value  = '';
+  MEMBERS.forEach(m => {
+    const lbl = document.getElementById('amc-'+m);
+    const cb  = lbl ? lbl.querySelector('input') : null;
+    if (cb) { cb.checked = false; lbl.classList.remove('checked'); }
+  });
+  document.getElementById('annual-modal-overlay').classList.add('open');
+}
+
+function closeAnnualModal() { document.getElementById('annual-modal-overlay').classList.remove('open'); }
+function closeAnnualModalOutside(e) { if (e.target===document.getElementById('annual-modal-overlay')) closeAnnualModal(); }
+function toggleAnnualCheck(m) {
+  const lbl = document.getElementById('amc-'+m);
+  lbl.classList.toggle('checked', lbl.querySelector('input').checked);
+}
+
+function saveAnnualEvent() {
+  const title = document.getElementById('af-title').value.trim();
+  const month = parseInt(document.getElementById('af-month').value);
+  const day   = parseInt(document.getElementById('af-day').value) || null;
+  const cat   = document.getElementById('af-cat').value;
+  const note  = document.getElementById('af-note').value.trim();
+  const members = MEMBERS.filter(m => {
+    const lbl = document.getElementById('amc-'+m);
+    return lbl && lbl.querySelector('input').checked;
+  });
+  if (!title) { showNotif('⚠️ Le titre est requis'); return; }
+  if (members.length===0) { showNotif('⚠️ Sélectionne au moins un membre'); return; }
+  if (editingAnnualId) {
+    const idx = annualEvents.findIndex(e=>e.id===editingAnnualId);
+    if (idx>-1) annualEvents[idx] = { ...annualEvents[idx], title, month, day, cat, note, members };
+    showNotif('✅ Événement annuel modifié');
+  } else {
+    annualEvents.push({ id: Date.now(), title, month, day, cat, note, members });
+    showNotif('✅ Événement annuel ajouté');
+  }
+  saveAnnualEvents();
+  closeAnnualModal();
+  renderAnnual();
+}
+
+function deleteAnnual(e, id) {
+  e.stopPropagation();
+  if (!confirm('Supprimer cet événement annuel ?')) return;
+  annualEvents = annualEvents.filter(ev => ev.id !== id);
+  saveAnnualEvents();
+  renderAnnual();
+  showNotif('🗑 Supprimé');
+}
+
+// ─────────────────────────────────────────
+//  IDEAS / ACTIVITÉS
+// ─────────────────────────────────────────
+const IDEAS_KEY = 'faugere_ideas_v1';
+let ideas = [];
+let ideaFilter = 'all';
+let editingIdeaId = null;
+
+const IDEA_CAT_EMOJIS  = {sport:'⚽',sortie:'🎉',voyage:'✈️',cuisine:'🍕',culture:'🎭',autre:'📌'};
+const IDEA_CAT_LABELS  = {sport:'Sport',sortie:'Sortie',voyage:'Voyage',cuisine:'Cuisine',culture:'Culture',autre:'Autre'};
+const SEASON_EMOJIS    = {printemps:'🌸',ete:'☀️',automne:'🍂',hiver:'❄️'};
+const IDEA_CAT_COLORS  = {
+  sport:   { bg:'var(--timeo-soft)',      color:'#2aa39a' },
+  sortie:  { bg:'var(--lou-soft)',        color:'var(--lou)' },
+  voyage:  { bg:'#E8F8E8',               color:'#3A9A3A' },
+  cuisine: { bg:'#FFF3E0',               color:'#E07B00' },
+  culture: { bg:'var(--julien-soft)',     color:'var(--julien)' },
+  autre:   { bg:'var(--border)',          color:'var(--muted)' },
+};
+
+function loadIdeas() {
+  try { ideas = JSON.parse(localStorage.getItem(IDEAS_KEY) || '[]'); }
+  catch { ideas = []; }
+}
+function saveIdeas() { localStorage.setItem(IDEAS_KEY, JSON.stringify(ideas)); }
+
+function seedIdeas() {
+  if (ideas.length > 0) return;
+  const demos = [
+    { title:'Randonnée en forêt',       cat:'sport',   members:MEMBERS,                  season:'automne', note:'Forêt de Fontainebleau ou Vosges', done:false },
+    { title:'Week-end à la mer',         cat:'voyage',  members:MEMBERS,                  season:'ete',     note:'Côte Atlantique', done:false },
+    { title:'Escape game en famille',    cat:'sortie',  members:MEMBERS,                  season:'',        note:'', done:false },
+    { title:'Soirée pizza maison 🍕',    cat:'cuisine', members:MEMBERS,                  season:'',        note:'Laisser chacun composer sa pizza', done:false },
+    { title:'Visite musée Sciences',     cat:'culture', members:['Lou','Timéo','Charlotte','Julien'], season:'hiver', note:'La Villette Paris', done:false },
+    { title:'Cours de poterie Charlotte',cat:'culture', members:['Charlotte'],            season:'',        note:'Idée cadeau aussi', done:false },
+    { title:'Tournoi de foot Timéo',     cat:'sport',   members:['Timéo','Julien'],       season:'printemps', note:'Chercher un tournoi local', done:true },
+    { title:'Pique-nique au parc',       cat:'sortie',  members:MEMBERS,                  season:'printemps', note:'', done:false },
+  ];
+  demos.forEach((idea,i) => ideas.push({ id: Date.now()+i+9000, ...idea }));
+  saveIdeas();
+}
+
+function setIdeaFilter(filter, btn) {
+  ideaFilter = filter;
+  document.querySelectorAll('.idea-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderIdeas();
+}
+
+function renderIdeas() {
+  let filtered = [...ideas];
+  if (ideaFilter === 'todo')   filtered = filtered.filter(i => !i.done);
+  else if (ideaFilter === 'done') filtered = filtered.filter(i => i.done);
+  else if (ideaFilter !== 'all') filtered = filtered.filter(i => i.cat === ideaFilter);
+
+  const container = document.getElementById('ideas-list');
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">💡</div><p>Aucune activité ici. Ajoutez vos idées !</p></div>';
+    return;
+  }
+  container.innerHTML = `<div class="ideas-grid">${filtered.map(idea => ideaCardHTML(idea)).join('')}</div>`;
+}
+
+function ideaCardHTML(idea) {
+  const cc = IDEA_CAT_COLORS[idea.cat] || IDEA_CAT_COLORS.autre;
+  const memberTags = idea.members.map(m =>
+    `<span class="tag" style="background:${MEMBER_COLORS[m]?.soft||'#eee'};color:${MEMBER_COLORS[m]?.main||'#999'}">${m}</span>`
+  ).join('');
+  const seasonBadge = idea.season ? `<span class="season-badge">${SEASON_EMOJIS[idea.season]||''} ${idea.season}</span>` : '';
+  const checkBtn = idea.done
+    ? `<button class="btn-check btn-check-done" onclick="toggleIdeaDone(${idea.id})" title="Marquer comme à faire">✅</button>`
+    : `<button class="btn-check btn-check-todo" onclick="toggleIdeaDone(${idea.id})" title="Marquer comme réalisée">○</button>`;
+  return `
+  <div class="idea-card${idea.done?' done':''}" style="border-top-color:${cc.color}">
+    <div class="idea-card-top">
+      <div class="idea-title">${IDEA_CAT_EMOJIS[idea.cat]||'📌'} ${idea.title}</div>
+      <div class="idea-actions">
+        ${checkBtn}
+        <button class="btn-icon" onclick="openEditIdeaModal(${idea.id})" title="Modifier">✏️</button>
+        <button class="btn-icon" onclick="deleteIdea(event,${idea.id})" title="Supprimer">🗑</button>
+      </div>
+    </div>
+    <div class="idea-badges">
+      <span class="tag" style="background:${cc.bg};color:${cc.color}">${IDEA_CAT_LABELS[idea.cat]||idea.cat}</span>
+      ${seasonBadge}
+      ${memberTags}
+    </div>
+    ${idea.note ? `<div class="idea-note">${idea.note}</div>` : ''}
+    ${!idea.done ? `<button class="btn-schedule" onclick="scheduleIdea(${idea.id})">📅 Programmer dans l'agenda</button>` : '<div style="font-size:.75rem;color:#3A9A3A;font-weight:700;text-align:center">✅ Réalisée !</div>'}
+  </div>`;
+}
+
+function toggleIdeaDone(id) {
+  const idx = ideas.findIndex(i=>i.id===id);
+  if (idx>-1) { ideas[idx].done = !ideas[idx].done; }
+  saveIdeas();
+  renderIdeas();
+  showNotif(ideas.find(i=>i.id===id)?.done ? '✅ Activité réalisée !' : '🔄 Remise en liste');
+}
+
+function scheduleIdea(id) {
+  const idea = ideas.find(i=>i.id===id);
+  if (!idea) return;
+  // Open main event modal pre-filled
+  editingId = null;
+  document.getElementById('modal-title').textContent = '📅 Programmer : ' + idea.title;
+  document.getElementById('f-title').value = idea.title;
+  document.getElementById('f-date').value  = toDateStr(new Date());
+  document.getElementById('f-time').value  = '';
+  document.getElementById('f-cat').value   = ['sport','sortie','sante','scolaire','famille','vacances'].includes(idea.cat) ? idea.cat : 'sortie';
+  document.getElementById('f-note').value  = idea.note || '';
+  MEMBERS.forEach(m => {
+    const lbl = document.getElementById('mc-'+m);
+    const cb  = lbl ? lbl.querySelector('input') : null;
+    if (cb) {
+      cb.checked = idea.members.includes(m);
+      lbl.classList.toggle('checked', idea.members.includes(m));
+    }
+  });
+  document.getElementById('modal-overlay').classList.add('open');
+  showNotif('📅 Choisissez la date pour programmer l\'activité');
+}
+
+function openIdeaModal() {
+  editingIdeaId = null;
+  document.getElementById('idea-modal-title').textContent = '💡 Nouvelle activité';
+  document.getElementById('if-title').value = '';
+  document.getElementById('if-cat').value   = 'sortie';
+  document.getElementById('if-season').value= '';
+  document.getElementById('if-note').value  = '';
+  MEMBERS.forEach(m => {
+    const lbl = document.getElementById('imc-'+m);
+    const cb  = lbl ? lbl.querySelector('input') : null;
+    if (cb) { cb.checked = false; lbl.classList.remove('checked'); }
+  });
+  document.getElementById('idea-modal-overlay').classList.add('open');
+}
+
+function openEditIdeaModal(id) {
+  const idea = ideas.find(i=>i.id===id);
+  if (!idea) return;
+  editingIdeaId = id;
+  document.getElementById('idea-modal-title').textContent = '✏️ Modifier l\'activité';
+  document.getElementById('if-title').value  = idea.title;
+  document.getElementById('if-cat').value    = idea.cat;
+  document.getElementById('if-season').value = idea.season || '';
+  document.getElementById('if-note').value   = idea.note  || '';
+  MEMBERS.forEach(m => {
+    const lbl = document.getElementById('imc-'+m);
+    const cb  = lbl ? lbl.querySelector('input') : null;
+    if (cb) {
+      cb.checked = idea.members.includes(m);
+      lbl.classList.toggle('checked', idea.members.includes(m));
+    }
+  });
+  document.getElementById('idea-modal-overlay').classList.add('open');
+}
+
+function closeIdeaModal() { document.getElementById('idea-modal-overlay').classList.remove('open'); }
+function closeIdeaModalOutside(e) { if (e.target===document.getElementById('idea-modal-overlay')) closeIdeaModal(); }
+function toggleIdeaCheck(m) {
+  const lbl = document.getElementById('imc-'+m);
+  lbl.classList.toggle('checked', lbl.querySelector('input').checked);
+}
+
+function saveIdea() {
+  const title  = document.getElementById('if-title').value.trim();
+  const cat    = document.getElementById('if-cat').value;
+  const season = document.getElementById('if-season').value;
+  const note   = document.getElementById('if-note').value.trim();
+  const members = MEMBERS.filter(m => {
+    const lbl = document.getElementById('imc-'+m);
+    return lbl && lbl.querySelector('input').checked;
+  });
+  if (!title) { showNotif('⚠️ Le titre est requis'); return; }
+  if (members.length===0) { showNotif('⚠️ Sélectionne au moins un membre'); return; }
+  if (editingIdeaId) {
+    const idx = ideas.findIndex(i=>i.id===editingIdeaId);
+    if (idx>-1) ideas[idx] = { ...ideas[idx], title, cat, season, note, members };
+    showNotif('✅ Activité modifiée');
+  } else {
+    ideas.push({ id: Date.now(), title, cat, season, note, members, done: false });
+    showNotif('✅ Activité ajoutée');
+  }
+  saveIdeas();
+  closeIdeaModal();
+  renderIdeas();
+}
+
+function deleteIdea(e, id) {
+  e.stopPropagation();
+  if (!confirm('Supprimer cette activité ?')) return;
+  ideas = ideas.filter(i => i.id !== id);
+  saveIdeas();
+  renderIdeas();
+  showNotif('🗑 Activité supprimée');
 }
 
 // ─────────────────────────────────────────
