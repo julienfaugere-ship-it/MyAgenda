@@ -875,11 +875,10 @@
   </div>
 </div>
 
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, remove, onValue, push, update }
-                                                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<!-- Firebase SDK (UMD — compatible script classique, pas de module) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
 
 // ─────────────────────────────────────────
 //  FIREBASE CONFIG
@@ -895,13 +894,19 @@ const firebaseConfig = {
   measurementId:     "G-KLJQHJ8V8T"
 };
 
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// ─── refs ───
-const eventsRef = ref(db, 'events');
-const annualRef = ref(db, 'annualEvents');
-const ideasRef  = ref(db, 'ideas');
+// ─── refs (compat API) ───
+const eventsRef = db.ref('events');
+const annualRef = db.ref('annualEvents');
+const ideasRef  = db.ref('ideas');
+
+// helpers compat
+function fbPush(r, data)         { return r.push(data); }
+function fbUpdate(r, path, data) { return db.ref(path).update(data); }
+function fbRemove(r, path)       { return db.ref(path).remove(); }
+function fbOnValue(r, cb)        { r.on('value', snap => cb(snap)); }
 
 // ─────────────────────────────────────────
 //  DATA
@@ -938,7 +943,7 @@ function init() {
 
   // ── Realtime listeners ──────────────────
 
-  onValue(eventsRef, snap => {
+  fbOnValue(eventsRef, snap => {
     const val = snap.val();
     events = val ? Object.entries(val).map(([fbKey, ev]) => ({ ...ev, fbKey })) : [];
     if (events.length === 0) seedDemo();
@@ -946,14 +951,14 @@ function init() {
     showLoading(false);
   });
 
-  onValue(annualRef, snap => {
+  fbOnValue(annualRef, snap => {
     const val = snap.val();
     annualEvents = val ? Object.entries(val).map(([fbKey, ev]) => ({ ...ev, fbKey })) : [];
     if (annualEvents.length === 0) seedAnnual();
     if (activeTab === 'annual') renderAnnual();
   });
 
-  onValue(ideasRef, snap => {
+  fbOnValue(ideasRef, snap => {
     const val = snap.val();
     ideas = val ? Object.entries(val).map(([fbKey, idea]) => ({ ...idea, fbKey })) : [];
     if (ideas.length === 0) seedIdeas();
@@ -1014,7 +1019,7 @@ function seedDemo() {
     { title:"Anniversaire de Timéo 🎂", date:d(14),        cat:'famille',  members:MEMBERS,                     note:'Penser au gâteau !' },
     { title:"Vacances été ✈️",          date:d(45),        cat:'vacances', members:MEMBERS,                     note:'Espagne – 2 semaines' },
   ];
-  demos.forEach(ev => push(eventsRef, { id: Date.now() + Math.random(), ...ev }));
+  demos.forEach(ev => fbPush(eventsRef, { id: Date.now() + Math.random(), ...ev }));
 }
 
 function seedAnnual() {
@@ -1027,7 +1032,7 @@ function seedAnnual() {
     { title:"Vacances de Noël ✈️",       month:11, day:null, cat:'vacances', members:MEMBERS, note:'Organiser les déplacements' },
     { title:"Vacances d'été ☀️",         month:6,  day:null, cat:'vacances', members:MEMBERS, note:'Réserver avant mars' },
   ];
-  demos.forEach(ev => push(annualRef, { id: Date.now() + Math.random(), ...ev }));
+  demos.forEach(ev => fbPush(annualRef, { id: Date.now() + Math.random(), ...ev }));
 }
 
 function seedIdeas() {
@@ -1039,7 +1044,7 @@ function seedIdeas() {
     { title:'Visite musée Sciences',    cat:'culture', members:MEMBERS, season:'hiver',   note:'La Villette Paris',      done:false },
     { title:'Pique-nique au parc',      cat:'sortie',  members:MEMBERS, season:'printemps',note:'',                      done:false },
   ];
-  demos.forEach(idea => push(ideasRef, { id: Date.now() + Math.random(), ...idea }));
+  demos.forEach(idea => fbPush(ideasRef, { id: Date.now() + Math.random(), ...idea }));
 }
 
 // ─────────────────────────────────────────
@@ -1400,11 +1405,11 @@ function saveEvent() {
   if (editingId) {
     const ev = events.find(e=>e.id===editingId);
     if (ev && ev.fbKey) {
-      update(ref(db, 'events/' + ev.fbKey), { title, date: fullDate, cat, note, members });
+      fbUpdate(null, 'events/' + ev.fbKey, { title, date: fullDate, cat, note, members });
     }
     showNotif('✅ Événement modifié');
   } else {
-    push(eventsRef, { id: Date.now(), title, date: fullDate, cat, note, members });
+    fbPush(eventsRef, { id: Date.now(), title, date: fullDate, cat, note, members });
     showNotif('✅ Événement ajouté');
   }
 
@@ -1415,7 +1420,7 @@ function deleteEvent(e, id) {
   e.stopPropagation();
   if (!confirm('Supprimer cet événement ?')) return;
   const ev = events.find(e=>e.id===id);
-  if (ev && ev.fbKey) remove(ref(db, 'events/' + ev.fbKey));
+  if (ev && ev.fbKey) fbRemove(null, 'events/' + ev.fbKey);
   showNotif('🗑 Événement supprimé');
 }
 
@@ -1459,7 +1464,7 @@ function seedAnnual() {
     { title:"Médecin annuel Lou",          month:4,  day:null, cat:'sante',   members:['Lou'],     note:'Bilan annuel' },
     { title:"Médecin annuel Timéo",        month:4,  day:null, cat:'sante',   members:['Timéo'],   note:'Bilan annuel' },
   ];
-  demos.forEach((ev,i) => annualEvents.push({ id: Date.now()+i+5000, ...ev }));
+  demos.forEach((ev,i) => fbPush(annualRef, { id: Date.now()+i+5000, ...ev }));
   saveAnnualEvents();
 }
 
@@ -1601,10 +1606,10 @@ function saveAnnualEvent() {
 
   if (editingAnnualId) {
     const ev = annualEvents.find(e=>e.id===editingAnnualId);
-    if (ev && ev.fbKey) update(ref(db, 'annualEvents/' + ev.fbKey), { title, month, day, cat, note, members });
+    if (ev && ev.fbKey) fbUpdate(null, 'annualEvents/' + ev.fbKey, { title, month, day, cat, note, members });
     showNotif('✅ Événement annuel modifié');
   } else {
-    push(annualRef, { id: Date.now(), title, month, day, cat, note, members });
+    fbPush(annualRef, { id: Date.now(), title, month, day, cat, note, members });
     showNotif('✅ Événement annuel ajouté');
   }
   closeAnnualModal();
@@ -1614,7 +1619,7 @@ function deleteAnnual(e, id) {
   e.stopPropagation();
   if (!confirm('Supprimer cet événement annuel ?')) return;
   const ev = annualEvents.find(e=>e.id===id);
-  if (ev && ev.fbKey) remove(ref(db, 'annualEvents/' + ev.fbKey));
+  if (ev && ev.fbKey) fbRemove(null, 'annualEvents/' + ev.fbKey);
   showNotif('🗑 Supprimé');
 }
 
@@ -1689,7 +1694,7 @@ function ideaCardHTML(idea) {
 
 function toggleIdeaDone(id) {
   const idea = ideas.find(i=>i.id===id);
-  if (idea && idea.fbKey) update(ref(db, 'ideas/' + idea.fbKey), { done: !idea.done });
+  if (idea && idea.fbKey) fbUpdate(null, 'ideas/' + idea.fbKey, { done: !idea.done });
   showNotif(!idea.done ? '✅ Activité réalisée !' : '🔄 Remise en liste');
 }
 
@@ -1770,10 +1775,10 @@ function saveIdea() {
   if (members.length===0) { showNotif('⚠️ Sélectionne au moins un membre'); return; }
   if (editingIdeaId) {
     const idea = ideas.find(i=>i.id===editingIdeaId);
-    if (idea && idea.fbKey) update(ref(db, 'ideas/' + idea.fbKey), { title, cat, season, note, members });
+    if (idea && idea.fbKey) fbUpdate(null, 'ideas/' + idea.fbKey, { title, cat, season, note, members });
     showNotif('✅ Activité modifiée');
   } else {
-    push(ideasRef, { id: Date.now(), title, cat, season, note, members, done: false });
+    fbPush(ideasRef, { id: Date.now(), title, cat, season, note, members, done: false });
     showNotif('✅ Activité ajoutée');
   }
   closeIdeaModal();
@@ -1783,47 +1788,13 @@ function deleteIdea(e, id) {
   e.stopPropagation();
   if (!confirm('Supprimer cette activité ?')) return;
   const idea = ideas.find(i=>i.id===id);
-  if (idea && idea.fbKey) remove(ref(db, 'ideas/' + idea.fbKey));
+  if (idea && idea.fbKey) fbRemove(null, 'ideas/' + idea.fbKey);
   showNotif('🗑 Activité supprimée');
 }
 
 // ─────────────────────────────────────────
 //  START
 // ─────────────────────────────────────────
-
-// Expose onclick handlers to global scope (needed because script is type=module)
-window.showTab             = showTab;
-window.handleFab           = handleFab;
-window.toggleMemberFilter  = toggleMemberFilter;
-window.openModal           = openModal;
-window.openEditModal       = openEditModal;
-window.closeModal          = closeModal;
-window.closeModalOutside   = closeModalOutside;
-window.toggleCheck         = toggleCheck;
-window.saveEvent           = saveEvent;
-window.deleteEvent         = deleteEvent;
-window.changeMonth         = changeMonth;
-window.changeWeek          = changeWeek;
-window.selectDay           = selectDay;
-window.switchAnnualYear    = switchAnnualYear;
-window.toggleMonthBlock    = toggleMonthBlock;
-window.openAnnualModal     = openAnnualModal;
-window.closeAnnualModal    = closeAnnualModal;
-window.closeAnnualModalOutside = closeAnnualModalOutside;
-window.toggleAnnualCheck   = toggleAnnualCheck;
-window.saveAnnualEvent     = saveAnnualEvent;
-window.deleteAnnual        = deleteAnnual;
-window.scheduleAnnual      = scheduleAnnual;
-window.setIdeaFilter       = setIdeaFilter;
-window.openIdeaModal       = openIdeaModal;
-window.openEditIdeaModal   = openEditIdeaModal;
-window.closeIdeaModal      = closeIdeaModal;
-window.closeIdeaModalOutside = closeIdeaModalOutside;
-window.toggleIdeaCheck     = toggleIdeaCheck;
-window.saveIdea            = saveIdea;
-window.deleteIdea          = deleteIdea;
-window.toggleIdeaDone      = toggleIdeaDone;
-window.scheduleIdea        = scheduleIdea;
 
 init();
 </script>
