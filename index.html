@@ -587,10 +587,10 @@
     </div>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('upcoming')">📋 À venir</button>
-    <button class="tab-btn" onclick="showTab('calendar')">📅 Calendrier</button>
-    <button class="tab-btn" onclick="showTab('annual')">🔁 Annuel</button>
-    <button class="tab-btn" onclick="showTab('ideas')">💡 Activités</button>
+    <button class="tab-btn active" onclick="showTab('upcoming', this)">📋 À venir</button>
+    <button class="tab-btn" onclick="showTab('calendar', this)">📅 Calendrier</button>
+    <button class="tab-btn" onclick="showTab('annual', this)">🔁 Evt annuel</button>
+    <button class="tab-btn" onclick="showTab('ideas', this)">💡 Activités</button>
   </div>
 </header>
 
@@ -1295,12 +1295,12 @@ function changeWeek(dir) {
 // ─────────────────────────────────────────
 let activeTab = 'upcoming';
 
-function showTab(name) {
+function showTab(name, btn) {
   activeTab = name;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   if (name==='calendar') renderCalendar();
   if (name==='week') renderWeek();
   if (name==='annual') renderAnnual();
@@ -1803,6 +1803,7 @@ window.toggleCheck         = toggleCheck;
 window.saveEvent           = saveEvent;
 window.deleteEvent         = deleteEvent;
 window.changeMonth         = changeMonth;
+window.changeWeek          = changeWeek;
 window.selectDay           = selectDay;
 window.switchAnnualYear    = switchAnnualYear;
 window.toggleMonthBlock    = toggleMonthBlock;
