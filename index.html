@@ -875,11 +875,37 @@
   </div>
 </div>
 
-<script>
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, remove, onValue, push, update }
+                                                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ─────────────────────────────────────────
+//  FIREBASE CONFIG
+// ─────────────────────────────────────────
+const firebaseConfig = {
+  apiKey:            "AIzaSyBTP2L07cowUv4oKT87qe4nr3t-Dh6EI3k",
+  authDomain:        "myagenda-7570e.firebaseapp.com",
+  databaseURL:       "https://myagenda-7570e-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "myagenda-7570e",
+  storageBucket:     "myagenda-7570e.firebasestorage.app",
+  messagingSenderId: "1381176938",
+  appId:             "1:1381176938:web:8c7cb8c9f9e66d861ddc13",
+  measurementId:     "G-KLJQHJ8V8T"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ─── refs ───
+const eventsRef = ref(db, 'events');
+const annualRef = ref(db, 'annualEvents');
+const ideasRef  = ref(db, 'ideas');
+
 // ─────────────────────────────────────────
 //  DATA
 // ─────────────────────────────────────────
-const STORAGE_KEY = 'faugere_events_v2';
 let events = [];
 let editingId = null;
 
@@ -905,53 +931,115 @@ function init() {
   calYear  = today.getFullYear();
   calMonth = today.getMonth();
 
-  loadEvents();
-  seedDemo();
-  loadAnnualEvents();
-  seedAnnual();
-  loadIdeas();
-  seedIdeas();
-
   document.getElementById('today-display').textContent = formatDateFR(today);
+  document.getElementById('f-date').value = toDateStr(today);
 
-  const dateInput = document.getElementById('f-date');
-  dateInput.value = toDateStr(today);
+  showLoading(true);
 
-  render();
+  // ── Realtime listeners ──────────────────
+
+  onValue(eventsRef, snap => {
+    const val = snap.val();
+    events = val ? Object.entries(val).map(([fbKey, ev]) => ({ ...ev, fbKey })) : [];
+    if (events.length === 0) seedDemo();
+    render();
+    showLoading(false);
+  });
+
+  onValue(annualRef, snap => {
+    const val = snap.val();
+    annualEvents = val ? Object.entries(val).map(([fbKey, ev]) => ({ ...ev, fbKey })) : [];
+    if (annualEvents.length === 0) seedAnnual();
+    if (activeTab === 'annual') renderAnnual();
+  });
+
+  onValue(ideasRef, snap => {
+    const val = snap.val();
+    ideas = val ? Object.entries(val).map(([fbKey, idea]) => ({ ...idea, fbKey })) : [];
+    if (ideas.length === 0) seedIdeas();
+    if (activeTab === 'ideas') renderIdeas();
+  });
 }
 
-function loadEvents() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    events = raw ? JSON.parse(raw) : [];
-  } catch { events = []; }
+function showLoading(on) {
+  let el = document.getElementById('loading-overlay');
+  if (on) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'loading-overlay';
+      el.innerHTML = '<div class="loading-box"><div class="loading-spinner"></div><div>Connexion Firebase…</div></div>';
+      el.style.cssText = 'position:fixed;inset:0;background:rgba(26,26,46,.7);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:center;justify-content:center;';
+      el.querySelector('.loading-box').style.cssText = 'background:#fff;border-radius:18px;padding:28px 36px;text-align:center;font-family:Nunito,sans-serif;font-weight:700;gap:12px;display:flex;flex-direction:column;align-items:center;';
+      el.querySelector('.loading-spinner').style.cssText = 'width:36px;height:36px;border:4px solid #eee;border-top-color:#6C63FF;border-radius:50%;animation:spin .7s linear infinite;';
+      if (!document.getElementById('spin-style')) {
+        const s = document.createElement('style');
+        s.id = 'spin-style';
+        s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(s);
+      }
+      document.body.appendChild(el);
+    }
+  } else {
+    if (el) el.remove();
+  }
 }
 
-function saveEvents() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+// ─── Firebase save/delete helpers ───
+
+function fbKey(id) {
+  // find fbKey from local array by numeric id
+  const ev = events.find(e=>e.id===id) || annualEvents.find(e=>e.id===id) || ideas.find(e=>e.id===id);
+  return ev ? ev.fbKey : null;
 }
+
+function saveEvents() { /* no-op: Firebase push/update handles it */ }
+function saveAnnualEvents() { /* no-op */ }
+function saveIdeas() { /* no-op */ }
+function loadEvents() { /* no-op: handled by onValue */ }
+function loadAnnualEvents() { /* no-op */ }
+function loadIdeas() { /* no-op */ }
 
 function seedDemo() {
-  if (events.length > 0) return;
   const today = new Date();
   const d = (offset, h='') => {
-    const dd = new Date(today);
-    dd.setDate(dd.getDate() + offset);
+    const dd = new Date(today); dd.setDate(dd.getDate()+offset);
     return toDateStr(dd) + (h ? 'T'+h : '');
   };
   const demos = [
-    { title:"Match de foot Timéo",      date:d(1,'10:00'), cat:'sport',    members:['Timéo','Julien'],        note:'Stade municipal' },
-    { title:"Dentiste Charlotte",        date:d(2,'14:30'), cat:'sante',    members:['Charlotte'],             note:'' },
-    { title:"Sortie cinéma famille",     date:d(4,'18:00'), cat:'sortie',   members:MEMBERS,                  note:'Choisir le film !' },
-    { title:"Réunion parents Lou",       date:d(5,'09:00'), cat:'scolaire', members:['Lou','Charlotte','Julien'], note:'' },
-    { title:"Week-end vélo",             date:d(8),         cat:'sport',    members:MEMBERS,                  note:'Forêt de Fontainebleau' },
-    { title:"Anniversaire de Timéo 🎂",  date:d(14),        cat:'famille',  members:MEMBERS,                  note:'Penser au gâteau !' },
-    { title:"Vacances été ✈️",           date:d(45),        cat:'vacances', members:MEMBERS,                  note:'Espagne – 2 semaines' },
+    { title:"Match de foot Timéo",     date:d(1,'10:00'), cat:'sport',    members:['Timéo','Julien'],           note:'Stade municipal' },
+    { title:"Dentiste Charlotte",       date:d(2,'14:30'), cat:'sante',    members:['Charlotte'],                note:'' },
+    { title:"Sortie cinéma famille",    date:d(4,'18:00'), cat:'sortie',   members:MEMBERS,                     note:'Choisir le film !' },
+    { title:"Réunion parents Lou",      date:d(5,'09:00'), cat:'scolaire', members:['Lou','Charlotte','Julien'], note:'' },
+    { title:"Week-end vélo",            date:d(8),         cat:'sport',    members:MEMBERS,                     note:'Forêt de Fontainebleau' },
+    { title:"Anniversaire de Timéo 🎂", date:d(14),        cat:'famille',  members:MEMBERS,                     note:'Penser au gâteau !' },
+    { title:"Vacances été ✈️",          date:d(45),        cat:'vacances', members:MEMBERS,                     note:'Espagne – 2 semaines' },
   ];
-  demos.forEach((ev, i) => {
-    events.push({ id: Date.now()+i, ...ev });
-  });
-  saveEvents();
+  demos.forEach(ev => push(eventsRef, { id: Date.now() + Math.random(), ...ev }));
+}
+
+function seedAnnual() {
+  const demos = [
+    { title:"Anniversaire Lou 🎂",       month:3,  day:12,   cat:'famille',  members:MEMBERS, note:'' },
+    { title:"Anniversaire Timéo 🎂",     month:7,  day:8,    cat:'famille',  members:MEMBERS, note:'Penser au gâteau !' },
+    { title:"Anniversaire Charlotte 🎂", month:9,  day:24,   cat:'famille',  members:MEMBERS, note:'' },
+    { title:"Anniversaire Julien 🎂",    month:1,  day:15,   cat:'famille',  members:MEMBERS, note:'' },
+    { title:"Rentrée scolaire 📚",       month:8,  day:null, cat:'scolaire', members:MEMBERS, note:'Préparer les fournitures' },
+    { title:"Vacances de Noël ✈️",       month:11, day:null, cat:'vacances', members:MEMBERS, note:'Organiser les déplacements' },
+    { title:"Vacances d'été ☀️",         month:6,  day:null, cat:'vacances', members:MEMBERS, note:'Réserver avant mars' },
+  ];
+  demos.forEach(ev => push(annualRef, { id: Date.now() + Math.random(), ...ev }));
+}
+
+function seedIdeas() {
+  const demos = [
+    { title:'Randonnée en forêt',      cat:'sport',   members:MEMBERS, season:'automne', note:'Forêt de Fontainebleau', done:false },
+    { title:'Week-end à la mer',        cat:'voyage',  members:MEMBERS, season:'ete',     note:'Côte Atlantique',        done:false },
+    { title:'Escape game en famille',   cat:'sortie',  members:MEMBERS, season:'',        note:'',                       done:false },
+    { title:'Soirée pizza maison 🍕',   cat:'cuisine', members:MEMBERS, season:'',        note:'Chacun compose sa pizza',done:false },
+    { title:'Visite musée Sciences',    cat:'culture', members:MEMBERS, season:'hiver',   note:'La Villette Paris',      done:false },
+    { title:'Pique-nique au parc',      cat:'sortie',  members:MEMBERS, season:'printemps',note:'',                      done:false },
+  ];
+  demos.forEach(idea => push(ideasRef, { id: Date.now() + Math.random(), ...idea }));
 }
 
 // ─────────────────────────────────────────
@@ -1310,25 +1398,24 @@ function saveEvent() {
   const fullDate = date + (time ? 'T'+time : '');
 
   if (editingId) {
-    const idx = events.findIndex(e=>e.id===editingId);
-    if (idx > -1) events[idx] = { ...events[idx], title, date: fullDate, cat, note, members };
+    const ev = events.find(e=>e.id===editingId);
+    if (ev && ev.fbKey) {
+      update(ref(db, 'events/' + ev.fbKey), { title, date: fullDate, cat, note, members });
+    }
     showNotif('✅ Événement modifié');
   } else {
-    events.push({ id: Date.now(), title, date: fullDate, cat, note, members });
+    push(eventsRef, { id: Date.now(), title, date: fullDate, cat, note, members });
     showNotif('✅ Événement ajouté');
   }
 
-  saveEvents();
   closeModal();
-  render();
 }
 
 function deleteEvent(e, id) {
   e.stopPropagation();
   if (!confirm('Supprimer cet événement ?')) return;
-  events = events.filter(ev => ev.id !== id);
-  saveEvents();
-  render();
+  const ev = events.find(e=>e.id===id);
+  if (ev && ev.fbKey) remove(ref(db, 'events/' + ev.fbKey));
   showNotif('🗑 Événement supprimé');
 }
 
@@ -1511,32 +1598,29 @@ function saveAnnualEvent() {
   });
   if (!title) { showNotif('⚠️ Le titre est requis'); return; }
   if (members.length===0) { showNotif('⚠️ Sélectionne au moins un membre'); return; }
+
   if (editingAnnualId) {
-    const idx = annualEvents.findIndex(e=>e.id===editingAnnualId);
-    if (idx>-1) annualEvents[idx] = { ...annualEvents[idx], title, month, day, cat, note, members };
+    const ev = annualEvents.find(e=>e.id===editingAnnualId);
+    if (ev && ev.fbKey) update(ref(db, 'annualEvents/' + ev.fbKey), { title, month, day, cat, note, members });
     showNotif('✅ Événement annuel modifié');
   } else {
-    annualEvents.push({ id: Date.now(), title, month, day, cat, note, members });
+    push(annualRef, { id: Date.now(), title, month, day, cat, note, members });
     showNotif('✅ Événement annuel ajouté');
   }
-  saveAnnualEvents();
   closeAnnualModal();
-  renderAnnual();
 }
 
 function deleteAnnual(e, id) {
   e.stopPropagation();
   if (!confirm('Supprimer cet événement annuel ?')) return;
-  annualEvents = annualEvents.filter(ev => ev.id !== id);
-  saveAnnualEvents();
-  renderAnnual();
+  const ev = annualEvents.find(e=>e.id===id);
+  if (ev && ev.fbKey) remove(ref(db, 'annualEvents/' + ev.fbKey));
   showNotif('🗑 Supprimé');
 }
 
 // ─────────────────────────────────────────
 //  IDEAS / ACTIVITÉS
 // ─────────────────────────────────────────
-const IDEAS_KEY = 'faugere_ideas_v1';
 let ideas = [];
 let ideaFilter = 'all';
 let editingIdeaId = null;
@@ -1552,28 +1636,6 @@ const IDEA_CAT_COLORS  = {
   culture: { bg:'var(--julien-soft)',     color:'var(--julien)' },
   autre:   { bg:'var(--border)',          color:'var(--muted)' },
 };
-
-function loadIdeas() {
-  try { ideas = JSON.parse(localStorage.getItem(IDEAS_KEY) || '[]'); }
-  catch { ideas = []; }
-}
-function saveIdeas() { localStorage.setItem(IDEAS_KEY, JSON.stringify(ideas)); }
-
-function seedIdeas() {
-  if (ideas.length > 0) return;
-  const demos = [
-    { title:'Randonnée en forêt',       cat:'sport',   members:MEMBERS,                  season:'automne', note:'Forêt de Fontainebleau ou Vosges', done:false },
-    { title:'Week-end à la mer',         cat:'voyage',  members:MEMBERS,                  season:'ete',     note:'Côte Atlantique', done:false },
-    { title:'Escape game en famille',    cat:'sortie',  members:MEMBERS,                  season:'',        note:'', done:false },
-    { title:'Soirée pizza maison 🍕',    cat:'cuisine', members:MEMBERS,                  season:'',        note:'Laisser chacun composer sa pizza', done:false },
-    { title:'Visite musée Sciences',     cat:'culture', members:['Lou','Timéo','Charlotte','Julien'], season:'hiver', note:'La Villette Paris', done:false },
-    { title:'Cours de poterie Charlotte',cat:'culture', members:['Charlotte'],            season:'',        note:'Idée cadeau aussi', done:false },
-    { title:'Tournoi de foot Timéo',     cat:'sport',   members:['Timéo','Julien'],       season:'printemps', note:'Chercher un tournoi local', done:true },
-    { title:'Pique-nique au parc',       cat:'sortie',  members:MEMBERS,                  season:'printemps', note:'', done:false },
-  ];
-  demos.forEach((idea,i) => ideas.push({ id: Date.now()+i+9000, ...idea }));
-  saveIdeas();
-}
 
 function setIdeaFilter(filter, btn) {
   ideaFilter = filter;
@@ -1626,17 +1688,14 @@ function ideaCardHTML(idea) {
 }
 
 function toggleIdeaDone(id) {
-  const idx = ideas.findIndex(i=>i.id===id);
-  if (idx>-1) { ideas[idx].done = !ideas[idx].done; }
-  saveIdeas();
-  renderIdeas();
-  showNotif(ideas.find(i=>i.id===id)?.done ? '✅ Activité réalisée !' : '🔄 Remise en liste');
+  const idea = ideas.find(i=>i.id===id);
+  if (idea && idea.fbKey) update(ref(db, 'ideas/' + idea.fbKey), { done: !idea.done });
+  showNotif(!idea.done ? '✅ Activité réalisée !' : '🔄 Remise en liste');
 }
 
 function scheduleIdea(id) {
   const idea = ideas.find(i=>i.id===id);
   if (!idea) return;
-  // Open main event modal pre-filled
   editingId = null;
   document.getElementById('modal-title').textContent = '📅 Programmer : ' + idea.title;
   document.getElementById('f-title').value = idea.title;
@@ -1710,30 +1769,61 @@ function saveIdea() {
   if (!title) { showNotif('⚠️ Le titre est requis'); return; }
   if (members.length===0) { showNotif('⚠️ Sélectionne au moins un membre'); return; }
   if (editingIdeaId) {
-    const idx = ideas.findIndex(i=>i.id===editingIdeaId);
-    if (idx>-1) ideas[idx] = { ...ideas[idx], title, cat, season, note, members };
+    const idea = ideas.find(i=>i.id===editingIdeaId);
+    if (idea && idea.fbKey) update(ref(db, 'ideas/' + idea.fbKey), { title, cat, season, note, members });
     showNotif('✅ Activité modifiée');
   } else {
-    ideas.push({ id: Date.now(), title, cat, season, note, members, done: false });
+    push(ideasRef, { id: Date.now(), title, cat, season, note, members, done: false });
     showNotif('✅ Activité ajoutée');
   }
-  saveIdeas();
   closeIdeaModal();
-  renderIdeas();
 }
 
 function deleteIdea(e, id) {
   e.stopPropagation();
   if (!confirm('Supprimer cette activité ?')) return;
-  ideas = ideas.filter(i => i.id !== id);
-  saveIdeas();
-  renderIdeas();
+  const idea = ideas.find(i=>i.id===id);
+  if (idea && idea.fbKey) remove(ref(db, 'ideas/' + idea.fbKey));
   showNotif('🗑 Activité supprimée');
 }
 
 // ─────────────────────────────────────────
 //  START
 // ─────────────────────────────────────────
+
+// Expose onclick handlers to global scope (needed because script is type=module)
+window.showTab             = showTab;
+window.handleFab           = handleFab;
+window.toggleMemberFilter  = toggleMemberFilter;
+window.openModal           = openModal;
+window.openEditModal       = openEditModal;
+window.closeModal          = closeModal;
+window.closeModalOutside   = closeModalOutside;
+window.toggleCheck         = toggleCheck;
+window.saveEvent           = saveEvent;
+window.deleteEvent         = deleteEvent;
+window.changeMonth         = changeMonth;
+window.selectDay           = selectDay;
+window.switchAnnualYear    = switchAnnualYear;
+window.toggleMonthBlock    = toggleMonthBlock;
+window.openAnnualModal     = openAnnualModal;
+window.closeAnnualModal    = closeAnnualModal;
+window.closeAnnualModalOutside = closeAnnualModalOutside;
+window.toggleAnnualCheck   = toggleAnnualCheck;
+window.saveAnnualEvent     = saveAnnualEvent;
+window.deleteAnnual        = deleteAnnual;
+window.scheduleAnnual      = scheduleAnnual;
+window.setIdeaFilter       = setIdeaFilter;
+window.openIdeaModal       = openIdeaModal;
+window.openEditIdeaModal   = openEditIdeaModal;
+window.closeIdeaModal      = closeIdeaModal;
+window.closeIdeaModalOutside = closeIdeaModalOutside;
+window.toggleIdeaCheck     = toggleIdeaCheck;
+window.saveIdea            = saveIdea;
+window.deleteIdea          = deleteIdea;
+window.toggleIdeaDone      = toggleIdeaDone;
+window.scheduleIdea        = scheduleIdea;
+
 init();
 </script>
 </body>
